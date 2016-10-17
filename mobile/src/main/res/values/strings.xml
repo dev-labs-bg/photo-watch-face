@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">PhotoWatchFace</string>
+    <string name="default_image_warning">You are using your default image. Click to choose another!</string>
+    <string name="shared_images_path">shared_images_path</string>
+    <string name="title_no_device_connected">No wearable device is currently connected.</string>
+    <string name="ok_no_device_connected">OK</string>
 </resources>
