@@ -52,7 +52,7 @@ public class ConfigListenerService extends WearableListenerService
             Log.d(TAG, "onMessageReceived: " + messageEvent);
         }
 
-        if (!messageEvent.getPath().equals(com.example.android.wearable.watchface.DigitalWatchFaceUtil.PATH_WITH_FEATURE)) {
+        if (!messageEvent.getPath().equals(DigitalWatchFaceUtil.PATH_WITH_FEATURE)) {
             return;
         }
         byte[] rawData = messageEvent.getData();
@@ -77,7 +77,7 @@ public class ConfigListenerService extends WearableListenerService
             }
         }
 
-        com.example.android.wearable.watchface.DigitalWatchFaceUtil.overwriteKeysInConfigDataMap(mGoogleApiClient, configKeysToOverwrite);
+        DigitalWatchFaceUtil.overwriteKeysInConfigDataMap(mGoogleApiClient, configKeysToOverwrite);
     }
 
     @Override // GoogleApiClient.ConnectionCallbacks
