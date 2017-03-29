@@ -25,6 +25,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.wearable.companion.WatchFaceCompanion;
@@ -75,7 +76,7 @@ public class DigitalConfigActivity extends Activity
         setContentView(R.layout.activity_digital_watch_face_config);
         ButterKnife.bind(this);
         Log.d(TAG, "onCreate: ButterKnife.bind");
-        path = UserSharedPreferences.getInstance(this).readImagesPath();
+        path = UserSharedPreferences.getInstance(this).readImagesPath(getApplicationContext());
         mPeerId = getIntent().getStringExtra(WatchFaceCompanion.EXTRA_PEER_ID);
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -114,7 +115,7 @@ public class DigitalConfigActivity extends Activity
     }
 
     @Override // ResultCallback<DataApi.DataItemResult>
-    public void onResult(DataApi.DataItemResult dataItemResult) {
+    public void onResult(@NonNull DataApi.DataItemResult dataItemResult) {
         if (dataItemResult.getStatus().isSuccess() && dataItemResult.getDataItem() != null) {
             DataItem configDataItem = dataItemResult.getDataItem();
             DataMapItem dataMapItem = DataMapItem.fromDataItem(configDataItem);
@@ -135,7 +136,7 @@ public class DigitalConfigActivity extends Activity
     }
 
     @Override // GoogleApiClient.OnConnectionFailedListener
-    public void onConnectionFailed(ConnectionResult result) {
+    public void onConnectionFailed(@NonNull ConnectionResult result) {
         if (Log.isLoggable(TAG, Log.DEBUG)) {
             Log.d(TAG, "onConnectionFailed: " + result);
         }
@@ -232,7 +233,7 @@ public class DigitalConfigActivity extends Activity
         if (requestCode == FILE_CODE && resultCode == Activity.RESULT_OK) {
             Uri uri = data.getData();
             path = uri.getPath() + "/";
-            UserSharedPreferences.getInstance(this).saveImagesPath(path);
+            UserSharedPreferences.getInstance(this).saveImagesPath(getApplicationContext(), path);
             adapter.setImagePaths(path);
             pathTextView.setText(path);
         }

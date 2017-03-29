@@ -3,6 +3,7 @@ package bg.devlabs.photowatchface;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -41,7 +42,7 @@ class SimpleImageAdapter extends RecyclerView.Adapter<SimpleImageAdapter.ViewHol
     private String directoryPath = "";
     private List<String> imagePaths;
     private GoogleApiClient mGoogleApiClient;
-    boolean computing = false;
+    private boolean computing = false;
 
     SimpleImageAdapter(String directoryPath, Activity activity, GoogleApiClient mGoogleApiClient) {
         this.directoryPath = directoryPath;
@@ -55,7 +56,6 @@ class SimpleImageAdapter extends RecyclerView.Adapter<SimpleImageAdapter.ViewHol
         fillImagePaths();
         notifyDataSetChanged();
     }
-
 
     private void fillImagePaths() {
         imagePaths = new ArrayList<>();
@@ -75,7 +75,6 @@ class SimpleImageAdapter extends RecyclerView.Adapter<SimpleImageAdapter.ViewHol
                 String name = file.getName();
                 imagePaths.add(name);
             }
-
         }
     }
 
@@ -107,12 +106,9 @@ class SimpleImageAdapter extends RecyclerView.Adapter<SimpleImageAdapter.ViewHol
                 //Bitmap bitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.image);
                 Asset asset = createAssetFromBitmap(bitmap);
 
-
 //                PutDataRequest request = PutDataRequest.create("/image");
 //                request.putAsset("profileImage", asset);
 //                Wearable.DataApi.putDataItem(mGoogleApiClient, request);
-
-
 
                 PutDataMapRequest dataMap = PutDataMapRequest.create("/image");
                 dataMap.getDataMap().putAsset("profileImage", asset);
@@ -120,11 +116,10 @@ class SimpleImageAdapter extends RecyclerView.Adapter<SimpleImageAdapter.ViewHol
                 PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi.putDataItem(mGoogleApiClient, request);
                 pendingResult.setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
                     @Override
-                    public void onResult(DataApi.DataItemResult dataItemResult) {
+                    public void onResult(@NonNull DataApi.DataItemResult dataItemResult) {
                         // something
                     }
                 } );
-
 
                 computing = false;
             }

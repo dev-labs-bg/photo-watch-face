@@ -22,19 +22,18 @@ import android.os.Environment;
  * string="", int = 0, etc
  * for example shared_default_string_value
  */
-public class UserSharedPreferences {
-    public static final String preferenceFileKey = "bg.devlabs.lingozing.PREFERENCE_FILE_KEY";
-    private static UserSharedPreferences instance = null;
+class UserSharedPreferences {
+    private static final String preferenceFileKey = "bg.devlabs.lingozing.PREFERENCE_FILE_KEY";
+    private static UserSharedPreferences instance;
     private SharedPreferences sharedPreferences;
-    private Context context;
 
     private UserSharedPreferences() {
+
     }
 
-    public static UserSharedPreferences getInstance(Context context) {
+    static UserSharedPreferences getInstance(Context context) {
         if (instance == null) {
             instance = new UserSharedPreferences();
-            instance.context = context;
             instance.setSharedPreferences(context.getSharedPreferences(
                     preferenceFileKey, Context.MODE_PRIVATE));
         }
@@ -50,13 +49,15 @@ public class UserSharedPreferences {
         this.sharedPreferences = sharedPreferences;
     }
 
-    public String readImagesPath() {
-        String defaultPaht = Environment.getExternalStorageDirectory() + "/" + Environment.DIRECTORY_DCIM + "/Camera/";;
-        return sharedPreferences.getString(context.getString(R.string.shared_images_path), defaultPaht);
+    String readImagesPath(Context context) {
+        String defaultPath = Environment.getExternalStorageDirectory() + "/" +
+                Environment.DIRECTORY_DCIM + "/Camera/";
+        return sharedPreferences.getString(context.getString(R.string.shared_images_path),
+                defaultPath);
     }
 
-    @SuppressLint("CommitPrefEdits")
-    public void saveImagesPath(String nativeLanguage) {
+    @SuppressLint("ApplySharedPref")
+    void saveImagesPath(Context context, String nativeLanguage) {
         SharedPreferences.Editor editor = getSharedPreferences().edit();
         editor.putString(context.getString(R.string.shared_images_path), nativeLanguage);
         editor.commit();
