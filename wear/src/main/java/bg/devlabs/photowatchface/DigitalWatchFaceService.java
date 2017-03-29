@@ -12,13 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */package bg.devlabs.photowatchface;
+ */
+package bg.devlabs.photowatchface;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -26,6 +26,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.wearable.watchface.CanvasWatchFaceService;
 import android.support.wearable.watchface.WatchFaceService;
 import android.support.wearable.watchface.WatchFaceStyle;
@@ -114,27 +115,11 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
         /**
          * Handler to update the time periodically in interactive mode.
          */
-        final Handler mUpdateTimeHandler = new Handler() {
-            @Override
-            public void handleMessage(Message message) {
-                switch (message.what) {
-                    case MSG_UPDATE_TIME:
-                        if (Log.isLoggable(TAG, Log.VERBOSE)) {
-                            Log.v(TAG, "updating time");
-                        }
-                        invalidate();
-                        if (shouldTimerBeRunning()) {
-                            long timeMs = System.currentTimeMillis();
-                            long delayMs =
-                                    mInteractiveUpdateRateMs - (timeMs % mInteractiveUpdateRateMs);
-                            mUpdateTimeHandler.sendEmptyMessageDelayed(MSG_UPDATE_TIME, delayMs);
-                        }
-                        break;
-                }
-            }
-        };
+        final Handler mUpdateTimeHandler = new CustomHandler(this, shouldTimerBeRunning(),
+                mInteractiveUpdateRateMs);
 
-        GoogleApiClient mGoogleApiClient = new GoogleApiClient.Builder(DigitalWatchFaceService.this)
+        GoogleApiClient
+                mGoogleApiClient = new GoogleApiClient.Builder(DigitalWatchFaceService.this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(Wearable.API)
@@ -174,11 +159,11 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
         java.text.DateFormat mDateFormat;
 
         boolean mShouldDrawColons;
-        float mXOffset;
-        float mYOffset;
-        float mLineHeight;
-        String mAmString;
-        String mPmString;
+        //        float mXOffset;
+//        float mYOffset;
+//        float mLineHeight;
+//        String mAmString;
+//        String mPmString;
         int mInteractiveBackgroundColor =
                 DigitalWatchFaceUtil.COLOR_VALUE_DEFAULT_AND_AMBIENT_BACKGROUND;
         int mInteractiveHourDigitsColor =
@@ -194,7 +179,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
          */
         boolean mLowBitAmbient;
 
-        public Engine(LayoutInflater mInflater) {
+        Engine(LayoutInflater mInflater) {
             this.mInflater = mInflater;
         }
 
@@ -209,11 +194,11 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
             dateTextView = (TextView) mFrameLayout.findViewById(R.id.date_text_view);
 
             setWatchFaceStyle(new WatchFaceStyle.Builder(DigitalWatchFaceService.this)
-                    .setCardPeekMode(WatchFaceStyle.PEEK_MODE_VARIABLE)
-                    .setBackgroundVisibility(WatchFaceStyle.BACKGROUND_VISIBILITY_INTERRUPTIVE)
-                    .setShowSystemUiTime(false)
+//                    .setCardPeekMode(WatchFaceStyle.PEEK_MODE_VARIABLE)
+//                    .setBackgroundVisibility(WatchFaceStyle.BACKGROUND_VISIBILITY_INTERRUPTIVE)
+//                    .setShowSystemUiTime(false)
                     .build());
-            Resources resources = DigitalWatchFaceService.this.getResources();
+//            Resources resources = DigitalWatchFaceService.this.getResources();
 
             mBackgroundPaint = new Paint();
             mBackgroundPaint.setColor(mInteractiveBackgroundColor);
@@ -229,17 +214,17 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
             super.onDestroy();
         }
 
-        private Paint createTextPaint(int defaultInteractiveColor) {
-            return createTextPaint(defaultInteractiveColor, NORMAL_TYPEFACE);
-        }
+//        private Paint createTextPaint(int defaultInteractiveColor) {
+//            return createTextPaint(defaultInteractiveColor, NORMAL_TYPEFACE);
+//        }
 
-        private Paint createTextPaint(int defaultInteractiveColor, Typeface typeface) {
-            Paint paint = new Paint();
-            paint.setColor(defaultInteractiveColor);
-            paint.setTypeface(typeface);
-            paint.setAntiAlias(true);
-            return paint;
-        }
+//        private Paint createTextPaint(int defaultInteractiveColor, Typeface typeface) {
+//            Paint paint = new Paint();
+//            paint.setColor(defaultInteractiveColor);
+//            paint.setTypeface(typeface);
+//            paint.setAntiAlias(true);
+//            return paint;
+//        }
 
         @Override
         public void onVisibilityChanged(boolean visible) {
@@ -303,8 +288,8 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
             super.onApplyWindowInsets(insets);
 
             // Load resources that have alternate values for round watches.
-            Resources resources = DigitalWatchFaceService.this.getResources();
-            boolean isRound = insets.isRound();
+//            Resources resources = DigitalWatchFaceService.this.getResources();
+//            boolean isRound = insets.isRound();
             mColonWidth = mColonPaint.measureText(COLON_STRING);
         }
 
@@ -393,7 +378,7 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
             }
         }
 
-        public void setInteractiveUpdateRateMs(long updateRateMs) {
+        void setInteractiveUpdateRateMs(long updateRateMs) {
             if (updateRateMs == mInteractiveUpdateRateMs) {
                 return;
             }
@@ -431,13 +416,13 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
             updatePaintIfInteractive(mSecondPaint, color);
         }
 
-        private String formatTwoDigitNumber(int hour) {
-            return String.format("%02d", hour);
-        }
-
-        private String getAmPmString(int amPm) {
-            return amPm == Calendar.AM ? mAmString : mPmString;
-        }
+//        private String formatTwoDigitNumber(int hour) {
+//            return String.format("%02d", hour);
+//        }
+//
+//        private String getAmPmString(int amPm) {
+//            return amPm == Calendar.AM ? mAmString : mPmString;
+//        }
 
         @Override
         public void onDraw(Canvas canvas, Rect bounds) {
@@ -460,23 +445,23 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
 
             //Time
             Date date = mCalendar.getTime();
-            SimpleDateFormat simpleDate = new SimpleDateFormat("HH:mm");
+            SimpleDateFormat simpleDate = new SimpleDateFormat("HH:mm", Locale.getDefault());
             String stringDate = simpleDate.format(date);
             timeTextView.setText(stringDate);
             // Date
             dateTextView.setText(mDateFormat.format(mDate));
             // Only render the day of week and date if there is no peek card, so they do not bleed
             // into each other in ambient mode.
-            if (getPeekCardPosition().isEmpty()) {
-                // Day of week
-//                canvas.drawText(
-//                        mDayOfWeekFormat.format(mDate),
-//                        mXOffset, mYOffset + mLineHeight, mDatePaint);
-
-//                canvas.drawText(
-//                        mDateFormat.format(mDate),
-//                        mXOffset, mYOffset + mLineHeight * 2, mDatePaint);
-            }
+//            if (getPeekCardPosition().isEmpty()) {
+//                // Day of week
+////                canvas.drawText(
+////                        mDayOfWeekFormat.format(mDate),
+////                        mXOffset, mYOffset + mLineHeight, mDatePaint);
+//
+////                canvas.drawText(
+////                        mDateFormat.format(mDate),
+////                        mXOffset, mYOffset + mLineHeight * 2, mDatePaint);
+//            }
         }
 
         /**
@@ -585,17 +570,22 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
          * @return whether UI has been updated
          */
         private boolean updateUiForKey(String configKey, int color) {
-            if (configKey.equals(DigitalWatchFaceUtil.KEY_BACKGROUND_COLOR)) {
-                setInteractiveBackgroundColor(color);
-            } else if (configKey.equals(DigitalWatchFaceUtil.KEY_HOURS_COLOR)) {
-                setInteractiveHourDigitsColor(color);
-            } else if (configKey.equals(DigitalWatchFaceUtil.KEY_MINUTES_COLOR)) {
-                setInteractiveMinuteDigitsColor(color);
-            } else if (configKey.equals(DigitalWatchFaceUtil.KEY_SECONDS_COLOR)) {
-                setInteractiveSecondDigitsColor(color);
-            } else {
-                Log.w(TAG, "Ignoring unknown config key: " + configKey);
-                return false;
+            switch (configKey) {
+                case DigitalWatchFaceUtil.KEY_BACKGROUND_COLOR:
+                    setInteractiveBackgroundColor(color);
+                    break;
+                case DigitalWatchFaceUtil.KEY_HOURS_COLOR:
+                    setInteractiveHourDigitsColor(color);
+                    break;
+                case DigitalWatchFaceUtil.KEY_MINUTES_COLOR:
+                    setInteractiveMinuteDigitsColor(color);
+                    break;
+                case DigitalWatchFaceUtil.KEY_SECONDS_COLOR:
+                    setInteractiveSecondDigitsColor(color);
+                    break;
+                default:
+                    Log.w(TAG, "Ignoring unknown config key: " + configKey);
+                    return false;
             }
             return true;
         }
@@ -617,12 +607,40 @@ public class DigitalWatchFaceService extends CanvasWatchFaceService {
         }
 
         @Override  // GoogleApiClient.OnConnectionFailedListener
-        public void onConnectionFailed(ConnectionResult result) {
+        public void onConnectionFailed(@NonNull ConnectionResult result) {
             if (Log.isLoggable(TAG, Log.DEBUG)) {
                 Log.d(TAG, "onConnectionFailed: " + result);
             }
         }
     }
 
+    private static class CustomHandler extends Handler {
+        Engine engine;
+        boolean shouldTimerBeRunning;
+        long interactiveUpdateRateMs;
 
+        CustomHandler(Engine engine, boolean shouldTimerBeRunning,
+                      long interactiveUpdateRateMs) {
+            this.engine = engine;
+            this.shouldTimerBeRunning = shouldTimerBeRunning;
+            this.interactiveUpdateRateMs = interactiveUpdateRateMs;
+        }
+
+        public void handleMessage(Message message) {
+            switch (message.what) {
+                case Engine.MSG_UPDATE_TIME:
+                    if (Log.isLoggable(TAG, Log.VERBOSE)) {
+                        Log.v(TAG, "updating time");
+                    }
+                    engine.invalidate();
+                    if (shouldTimerBeRunning) {
+                        long timeMs = System.currentTimeMillis();
+                        long delayMs =
+                                interactiveUpdateRateMs - (timeMs % interactiveUpdateRateMs);
+                        sendEmptyMessageDelayed(Engine.MSG_UPDATE_TIME, delayMs);
+                    }
+                    break;
+            }
+        }
+    }
 }
