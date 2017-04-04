@@ -233,7 +233,7 @@ public class WatchFaceFolderService extends CanvasWatchFaceService {
                 return;
             }
             if (mBG.getWidth() > bounds.width() || mBG.getHeight() > bounds.height()) {
-                mBG = Bitmap.createScaledBitmap(mBG, bounds.width(), bounds.height(), true);
+                mBG = Bitmap.createScaledBitmap(mBG, bounds.width(), bounds.height(), false);
             }
             mFrameLayout.setBackground(new BitmapDrawable(getApplicationContext().getResources(), mBG));
 //            canvas.drawBitmap(mBG, 0, 0, null);

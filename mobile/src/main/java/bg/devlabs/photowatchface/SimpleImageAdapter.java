@@ -128,7 +128,7 @@ class SimpleImageAdapter extends RecyclerView.Adapter<SimpleImageAdapter.ViewHol
                 pendingResult.setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
                     @Override
                     public void onResult(@NonNull DataApi.DataItemResult dataItemResult) {
-`                        Toast.makeText(activity, "The image is set!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(activity, "The image is set!", Toast.LENGTH_LONG).show();
                         computing = false;
                         // something
                     }
@@ -163,7 +163,7 @@ class SimpleImageAdapter extends RecyclerView.Adapter<SimpleImageAdapter.ViewHol
                     bitmapWidth
             );
         }
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteStream);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 20, byteStream);
         Log.d("TestLog", "bitmap.compress");
         return Asset.createFromBytes(byteStream.toByteArray());
     }
