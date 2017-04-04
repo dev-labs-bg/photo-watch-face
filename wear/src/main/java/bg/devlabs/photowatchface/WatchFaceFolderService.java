@@ -1,4 +1,5 @@
 package bg.devlabs.photowatchface;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -228,9 +229,10 @@ public class WatchFaceFolderService extends CanvasWatchFaceService {
             // Date
             dateTextView.setText(mDateFormat.format(mDate));
             // draw the background image
-            if (mBG == null || mBG.getWidth() != bounds.width() || mBG.getHeight() != bounds.height())
-                mBG = Bitmap.createScaledBitmap(mBG, bounds.width(), bounds.height(), false);
-            mFrameLayout.setBackground(new BitmapDrawable(mBG));
+//            if (mBG == null || mBG.getWidth() != bounds.width() || mBG.getHeight() != bounds.height()) {
+//                mBG = Bitmap.createScaledBitmap(mBG, bounds.width(), bounds.height(), false);
+//            }
+            mFrameLayout.setBackground(new BitmapDrawable(getApplicationContext().getResources(), mBG));
 //            canvas.drawBitmap(mBG, 0, 0, null);
         }
 
@@ -291,30 +293,37 @@ public class WatchFaceFolderService extends CanvasWatchFaceService {
         private void updateAssetForDataItem(DataItem item) {
             DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
 
-            if (dataMap.containsKey("assetbody")) {
-                Asset asset = dataMap.getAsset("assetbody");
+            if (dataMap.containsKey("profileImage")) {
+                final Asset asset = dataMap.getAsset("profileImage");
 
-                if (asset == null)
+                if (asset == null) {
                     return;
-
-                ConnectionResult cr = mGoogleApiClient.blockingConnect(5000, TimeUnit.MILLISECONDS);
-                if (!cr.isSuccess())
-                    return;
-
-                InputStream is = Wearable.DataApi.getFdForAsset(
-                        mGoogleApiClient, asset).await().getInputStream();
-                mGoogleApiClient.disconnect();
-
-                if (is == null)
-                    return;
-
-                if (mBG != null) {
-                    mBG.recycle();
-                    mBG = null;
                 }
-                mBG = BitmapFactory.decodeStream(is);
 
-                invalidate();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ConnectionResult cr = mGoogleApiClient.blockingConnect(5000, TimeUnit.MILLISECONDS);
+                        if (!cr.isSuccess()) {
+                            return;
+                        }
+
+                        InputStream is = Wearable.DataApi.getFdForAsset(
+                                mGoogleApiClient, asset).await().getInputStream();
+                        mGoogleApiClient.disconnect();
+
+                        if (is == null)
+                            return;
+
+                        if (mBG != null) {
+//                            mBG.recycle();
+                            mBG = null;
+                        }
+                        mBG = BitmapFactory.decodeStream(is);
+
+                        invalidate();
+                    }
+                }).start();
             }
         }
 
@@ -328,7 +337,7 @@ public class WatchFaceFolderService extends CanvasWatchFaceService {
                             Log.d("TestLog", "onDataChanged: /image");
                             updateAssetForDataItem(item);
                         } else {
-                            Log.d("TestLog", "onDataChanged:(( " +item.getUri().getPath());
+                            Log.d("TestLog", "onDataChanged:(( " + item.getUri().getPath());
                         }
                     }
                 }
