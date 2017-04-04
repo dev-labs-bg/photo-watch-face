@@ -16,13 +16,11 @@
 
 package bg.devlabs.photowatchface;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -226,8 +224,6 @@ public class DigitalConfigActivity extends Activity
         }
     }
 
-
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == FILE_CODE && resultCode == Activity.RESULT_OK) {

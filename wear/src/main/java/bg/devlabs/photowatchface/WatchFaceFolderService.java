@@ -313,7 +313,7 @@ public class WatchFaceFolderService extends CanvasWatchFaceService {
 
                         InputStream is = Wearable.DataApi.getFdForAsset(
                                 mGoogleApiClient, asset).await().getInputStream();
-                        mGoogleApiClient.disconnect();
+//                        mGoogleApiClient.disconnect();
 
                         if (is == null)
                             return;

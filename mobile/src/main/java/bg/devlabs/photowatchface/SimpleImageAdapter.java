@@ -98,11 +98,20 @@ class SimpleImageAdapter extends RecyclerView.Adapter<SimpleImageAdapter.ViewHol
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(computing){
+                if (computing) {
                     Toast.makeText(activity, "Please wait", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                computing = true;
+                createSendImage(imagePath);
+            }
+        });
+    }
+
+    private void createSendImage(final String imagePath) {
+        computing = true;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
                 Log.d("TestLog", "onClick: imageview");
                 Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
                 //Bitmap bitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.image);
@@ -122,14 +131,37 @@ class SimpleImageAdapter extends RecyclerView.Adapter<SimpleImageAdapter.ViewHol
                         computing = false;
                         // something
                     }
-                } );
+                });
             }
-        });
+        }).start();
     }
 
     private static Asset createAssetFromBitmap(Bitmap bitmap) {
         Log.d("TestLog", "createAssetFromBitmap: ");
         final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+        int bitmapWidth = bitmap.getWidth();
+        int bitmapHeight = bitmap.getHeight();
+
+        if (bitmapWidth >= bitmapHeight) {
+
+            bitmap = Bitmap.createBitmap(
+                    bitmap,
+                    bitmapWidth / 2 - bitmapHeight / 2,
+                    0,
+                    bitmapHeight,
+                    bitmapHeight
+            );
+
+        } else {
+
+            bitmap = Bitmap.createBitmap(
+                    bitmap,
+                    0,
+                    bitmapHeight / 2 - bitmapWidth / 2,
+                    bitmapWidth,
+                    bitmapWidth
+            );
+        }
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteStream);
         Log.d("TestLog", "bitmap.compress");
         return Asset.createFromBytes(byteStream.toByteArray());
