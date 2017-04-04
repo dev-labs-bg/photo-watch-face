@@ -229,9 +229,12 @@ public class WatchFaceFolderService extends CanvasWatchFaceService {
             // Date
             dateTextView.setText(mDateFormat.format(mDate));
             // draw the background image
-//            if (mBG == null || mBG.getWidth() != bounds.width() || mBG.getHeight() != bounds.height()) {
-//                mBG = Bitmap.createScaledBitmap(mBG, bounds.width(), bounds.height(), false);
-//            }
+            if (mBG == null) {
+                return;
+            }
+            if (mBG.getWidth() > bounds.width() || mBG.getHeight() > bounds.height()) {
+                mBG = Bitmap.createScaledBitmap(mBG, bounds.width(), bounds.height(), true);
+            }
             mFrameLayout.setBackground(new BitmapDrawable(getApplicationContext().getResources(), mBG));
 //            canvas.drawBitmap(mBG, 0, 0, null);
         }
