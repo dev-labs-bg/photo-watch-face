@@ -128,6 +128,7 @@ class SimpleImageAdapter extends RecyclerView.Adapter<SimpleImageAdapter.ViewHol
                 pendingResult.setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
                     @Override
                     public void onResult(@NonNull DataApi.DataItemResult dataItemResult) {
+`                        Toast.makeText(activity, "The image is set!", Toast.LENGTH_LONG).show();
                         computing = false;
                         // something
                     }
