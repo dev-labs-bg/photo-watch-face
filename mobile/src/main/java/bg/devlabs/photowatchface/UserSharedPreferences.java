@@ -23,7 +23,7 @@ import android.os.Environment;
  * for example shared_default_string_value
  */
 class UserSharedPreferences {
-    private static final String preferenceFileKey = "bg.devlabs.lingozing.PREFERENCE_FILE_KEY";
+    private static final String preferenceFileKey = "bg.devlabs.photowatchface.PREFERENCE_FILE_KEY";
     private static UserSharedPreferences instance;
     private SharedPreferences sharedPreferences;
 
